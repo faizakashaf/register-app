@@ -11,6 +11,7 @@ pipeline {
     APP_NAME = 'register-app'
     RELEASE = '1.0.0'
     DOCKER_USER = 'faizakashaf12'
+    DOCKER_PASS = 'dockerhub'
     DOCKER_IMAGE = "${DOCKER_USER}/${APP_NAME}"
     DOCKER_TAG = 'v1.0' 
   }
@@ -52,7 +53,7 @@ pipeline {
 
    stage('Docker Login') {
     steps {
-     withCredentials([usernamePassword(credentialsId: 'docker hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
        sh ' Docker logged in successfully'
      }
