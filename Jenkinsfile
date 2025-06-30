@@ -7,6 +7,14 @@ pipeline {
     jdk 'Java17'
     maven 'Maven3'
   }
+  environment{
+    APP_NAME = 'register-app'
+    RELEASE = '1.0.0'
+    DOCKER_USER = 'faizakashaf12'
+    DOCKER_IMAGE = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+    DOCKER_TAG = 'v1.0'
+    DOCKER_PASS = 'dockerhub'  
+  }
 
   stages {
     stage("Cleanup Workspace") {
@@ -42,5 +50,19 @@ pipeline {
         }
       }
     }
+
+   stage('Docker Login') {
+    steps {
+     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+       sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+       sh ' Docker logged in successfully'
+     }
+   }
   }
+  stage('Docker Build and Push'){
+    steps {
+      sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .' 
+      sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+    }
+ }
 }
