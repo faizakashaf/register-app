@@ -65,6 +65,18 @@ pipeline {
         sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
     }
  }
+  stage('Docker Image Trivy Scan'){
+  steps {
+    script {
+      sh ( ' docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image faizakashaf12/register-app:v1.0 --no-progress --scanners vuln  --exit-code --severity HIGH,CRITICAL --format table')        }
 }
+}
+  stage('Cleanup Artifacts'){
+    steps {
+      sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+      sh "docker rmi ${IMAGE_NAME}:latest"
+    }
+  }
+ }
 }
 
